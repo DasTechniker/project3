@@ -104,6 +104,7 @@ def value_iteration(env, gamma, max_iterations, logger):
 ###############################################################################
     v_old = [0]*NUM_STATES
     for k in range(1,max_iterations):
+        logger.log(k, v, pi)
         for s in range(0, NUM_STATES):
             tempVals = [0]*NUM_ACTIONS
             for a in range(0,NUM_ACTIONS):
@@ -165,6 +166,7 @@ def policy_iteration(env, gamma, max_iterations, logger):
 ###############################################################################
     v_old = [0] * NUM_STATES
     for k in range(1, max_iterations):
+        logger.log(k, v, pi)
         for s in range(0, NUM_STATES):
             tempVals = [0] * NUM_ACTIONS
             t = env.trans_model[s][pi[s]]
@@ -172,6 +174,15 @@ def policy_iteration(env, gamma, max_iterations, logger):
                 tempVals[pi[s]] += epitaph[0] * (epitaph[2] + (gamma * v_old[epitaph[1]]))
             v[s] = max(tempVals)
             pi[s] = tempVals.index(max(tempVals))
+        for s in range(0, NUM_STATES):
+            tempVals = [0]*NUM_ACTIONS
+            for a in range(0,NUM_ACTIONS):
+                t=env.trans_model[s][a]
+                for epitaph in t:
+                    tempVals[a] += epitaph[0] * (epitaph[2] + (gamma * v_old[epitaph[1]]))
+            if v[s]<max(tempVals):
+                v[s]=max(tempVals)
+                pi[s]=tempVals.index(max(tempVals))
         v_old = v
 ###############################################################################
     return pi
