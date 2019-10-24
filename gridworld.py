@@ -164,9 +164,14 @@ def policy_iteration(env, gamma, max_iterations, logger):
 
 ### Please finish the code below ##############################################
 ###############################################################################
-    v_old = [0] * NUM_STATES
-    for k in range(1, max_iterations):
+    v_old = v
+    pi_old = pi
+    converged = False
+    k = 1
+    unchanged = 0
+    while not converged or k==max_iterations:
         logger.log(k, v, pi)
+        k+=1
         for s in range(0, NUM_STATES):
             tempVals = [0] * NUM_ACTIONS
             t = env.trans_model[s][pi[s]]
@@ -175,15 +180,21 @@ def policy_iteration(env, gamma, max_iterations, logger):
             v[s] = max(tempVals)
             pi[s] = tempVals.index(max(tempVals))
         for s in range(0, NUM_STATES):
-            tempVals = [0]*NUM_ACTIONS
-            for a in range(0,NUM_ACTIONS):
-                t=env.trans_model[s][a]
+            tempVals = [0] * NUM_ACTIONS
+            for a in range(0, NUM_ACTIONS):
+                t = env.trans_model[s][a]
                 for epitaph in t:
                     tempVals[a] += epitaph[0] * (epitaph[2] + (gamma * v_old[epitaph[1]]))
-            if v[s]<max(tempVals):
-                v[s]=max(tempVals)
-                pi[s]=tempVals.index(max(tempVals))
+            if v[s] < max(tempVals):
+                v[s] = max(tempVals)
+                pi[s] = tempVals.index(max(tempVals))
+        if pi_old == pi:
+            unchanged+=1
+        if unchanged==15:
+            converged=True
         v_old = v
+        pi_old = pi
+
 ###############################################################################
     return pi
 
