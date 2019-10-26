@@ -169,7 +169,7 @@ def policy_iteration(env, gamma, max_iterations, logger):
     converged = False
     k = 1
     unchanged = 0
-    while not converged or k==max_iterations:
+    while not converged and k!=max_iterations:
         logger.log(k, v, pi)
         k+=1
         for s in range(0, NUM_STATES):
@@ -178,7 +178,6 @@ def policy_iteration(env, gamma, max_iterations, logger):
             for epitaph in t:
                 tempVals[pi[s]] += epitaph[0] * (epitaph[2] + (gamma * v_old[epitaph[1]]))
             v[s] = max(tempVals)
-            pi[s] = tempVals.index(max(tempVals))
         for s in range(0, NUM_STATES):
             tempVals = [0] * NUM_ACTIONS
             for a in range(0, NUM_ACTIONS):
@@ -190,7 +189,9 @@ def policy_iteration(env, gamma, max_iterations, logger):
                 pi[s] = tempVals.index(max(tempVals))
         if pi_old == pi:
             unchanged+=1
-        if unchanged==15:
+        else:
+            unchanged=0
+        if unchanged>=15:
             converged=True
         v_old = v
         pi_old = pi
