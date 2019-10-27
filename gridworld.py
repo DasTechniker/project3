@@ -235,7 +235,7 @@ def q_learning(env, gamma, max_iterations, logger):
     # Adjust superparameters as you see fit
     #
     # parameter for the epsilon-greedy method to trade off exploration and exploitation
-    eps = 1
+    eps = .8
     # learning rate for updating q values based on sample estimates
     alpha = 0.1
     #########################
@@ -244,6 +244,31 @@ def q_learning(env, gamma, max_iterations, logger):
 
 ### Please finish the code below ##############################################
 ###############################################################################
+    q = [0]*NUM_STATES
+    for i in range(NUM_STATES):
+        q[i] = [0]*NUM_ACTIONS
+    q_old = q
+    print(str(q))
+    for k in range(1,max_iterations):
+        logger.log(k, v, pi)
+        s = env.reset()
+        stillGo = True
+        visited = [False]*NUM_STATES
+        mustRand = False
+        visited[s]=True
+        while stillGo:
+            a = 0
+            if (sum(q[s])/len(q[s]))==max(q[s]) or random.random()>=eps or mustRand:
+                a = random.randrange(NUM_ACTIONS)
+            else:
+                a = q[s].index(max(q[s]))
+            s_, r, terminal, info = env.step(a)
+            stillGo = not terminal
+            q[s][a]=(q_old[s][a])+(alpha*(r+(gamma*max(q_old[s_]))-q_old[s][a]))
+            v[s]=max(q[s])
+            pi[s]=q[s].index(max(q[s]))
+            s = s_
+            q_old = q
 
 ###############################################################################
     return pi
