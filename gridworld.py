@@ -102,18 +102,27 @@ def value_iteration(env, gamma, max_iterations, logger):
    
 ### Please finish the code below ##############################################
 ###############################################################################
+    #Set up storage for v-values one iteration bacck
     v_old = [0]*NUM_STATES
-    for k in range(1,max_iterations):
+
+    #For max_iterations...
+    for k in range(1,max_iterations+1):
+        #Update logger
         logger.log(k, v, pi)
+
+        #For each state, determine best actions
         for s in range(0, NUM_STATES):
+            #Set up storage for each action value
             tempVals = [0]*NUM_ACTIONS
-            for a in range(0,NUM_ACTIONS):
+            for a in range(0,NUM_ACTIONS): #Iterate through all actions and determine values
                 t=env.trans_model[s][a]
                 for epitaph in t:
                     tempVals[a] += epitaph[0] * (epitaph[2] + (gamma * v_old[epitaph[1]]))
-            v[s]=max(tempVals)
-            pi[s]=tempVals.index(max(tempVals))
-        v_old=v
+            v[s]=max(tempVals) #Set v[s] to max action value
+            pi[s]=tempVals.index(max(tempVals)) #Set pi[s] to action with highest action value
+        v_old=v #Update v_old to v for next iteration
+
+    logger.log(k, v, pi) #Update logger one last time
 
 ###############################################################################
     return pi
@@ -164,20 +173,29 @@ def policy_iteration(env, gamma, max_iterations, logger):
 
 ### Please finish the code below ##############################################
 ###############################################################################
+    #Set up storage for v and pi values one iteration back
     v_old = v
     pi_old = pi
+
+    #Also store whether the policy has converged, current iteration, and a counter for how many iterations the policy hasn't changed in
     converged = False
     k = 1
     unchanged = 0
-    while not converged and k!=max_iterations:
-        logger.log(k, v, pi)
+
+    #While both not at max iterations and not converged, iterate.
+    while not converged and k!=max_iterations+1:
+        logger.log(k, v, pi) #Update logger, k
         k+=1
+
+        #For each state, get a value for the current policy's action
         for s in range(0, NUM_STATES):
             tempVals = [0] * NUM_ACTIONS
             t = env.trans_model[s][pi[s]]
             for epitaph in t:
                 tempVals[pi[s]] += epitaph[0] * (epitaph[2] + (gamma * v_old[epitaph[1]]))
             v[s] = max(tempVals)
+
+        #After values are gotten, do limited value iteration to improve the policy
         for s in range(0, NUM_STATES):
             tempVals = [0] * NUM_ACTIONS
             for a in range(0, NUM_ACTIONS):
@@ -187,12 +205,17 @@ def policy_iteration(env, gamma, max_iterations, logger):
             if v[s] < max(tempVals):
                 v[s] = max(tempVals)
                 pi[s] = tempVals.index(max(tempVals))
+
+        #If pi hasn't changed, update unchanged counter, else, reset counter
         if pi_old == pi:
             unchanged+=1
         else:
             unchanged=0
+        #If uunchanged counter is at 15 or above, stop iteration
         if unchanged>=15:
             converged=True
+
+        #Update v_old and pi_old
         v_old = v
         pi_old = pi
 
@@ -248,8 +271,7 @@ def q_learning(env, gamma, max_iterations, logger):
     for i in range(NUM_STATES):
         q[i] = [0]*NUM_ACTIONS
     q_old = q
-    print(str(q))
-    for k in range(1,max_iterations):
+    for k in range(1,max_iterations+1):
         logger.log(k, v, pi)
         s = env.reset()
         stillGo = True

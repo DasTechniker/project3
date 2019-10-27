@@ -79,31 +79,25 @@ def q_learning(env, logger):
 
 ### Please finish the code below ##############################################
 ###############################################################################
+    #Set up v, pi, and q.
     v = [0]*NUM_STATES
     pi = [0]*NUM_STATES
     q = [0] * NUM_STATES
     for i in range(NUM_STATES):
         q[i] = [0] * NUM_ACTIONS
     q_old = q
-    print(str(q))
+
     s = env.reset()
     for k in range(1, max_iterations):
-        logger.log(k, v, pi)
-
-        stillGo = True
-        visited = [False] * NUM_STATES
-        mustRand = False
-        visited[s] = True
+        #logger.log(k, v, pi)
         a = 0
-        if (sum(q[s]) / len(q[s])) == max(q[s]) or random.random() >= eps or mustRand:
+        if (sum(q[s]) / len(q[s])) == max(q[s]) or random.random() >= eps:
             a = random.randrange(NUM_ACTIONS)
         else:
             a = q[s].index(max(q[s]))
         s_, r, terminal, info = env.step(a)
-        stillGo = not terminal
         q[s][a] = (q_old[s][a]) + (alpha * (r + (gamma * max(q_old[s_])) - q_old[s][a]))
         v[s] = max(q[s])
-        print(s)
         pi[s] = q[s].index(max(q[s]))
         s = s_
         q_old = q
