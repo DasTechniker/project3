@@ -55,7 +55,7 @@ You can visualize the value, v, and policy, pi, for the i-th iteration by
 You can also only update the visualization of the v values by
     logger.log(i, v)
 """
-#Assignment completed by Timothy Morse, Daniel Herold, Section 004
+#++++++++++++++Assignment completed by Timothy Morse, Daniel Herold, Section 004++++++++++++++
 
 # use random library if needed
 import random
