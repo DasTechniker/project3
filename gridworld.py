@@ -55,7 +55,7 @@ You can visualize the value, v, and policy, pi, for the i-th iteration by
 You can also only update the visualization of the v values by
     logger.log(i, v)
 """
-
+#Assignment completed by Timothy Morse, Daniel Herold, Section 004
 
 # use random library if needed
 import random
@@ -267,31 +267,30 @@ def q_learning(env, gamma, max_iterations, logger):
 
 ### Please finish the code below ##############################################
 ###############################################################################
+    #Initialise q and q_old
     q = [0]*NUM_STATES
     for i in range(NUM_STATES):
         q[i] = [0]*NUM_ACTIONS
     q_old = q
+
     for k in range(1,max_iterations+1):
-        logger.log(k, v, pi)
-        s = env.reset()
-        stillGo = True
-        visited = [False]*NUM_STATES
-        mustRand = False
-        visited[s]=True
-        while stillGo:
-            a = 0
-            if (sum(q[s])/len(q[s]))==max(q[s]) or random.random()>=eps or mustRand:
+        logger.log(k, v, pi) #Update logger
+        s = env.reset() #Initialise s
+        stillGo = True #Set up control boolean - there's other ways, but this works.
+        while stillGo: #While not at a terminal state, keep going
+            a = 0 #If all action values same OR at a random chance, pick random action. Else, pick max action.
+            if (sum(q[s])/len(q[s]))==max(q[s]) or random.random()>=eps:
                 a = random.randrange(NUM_ACTIONS)
             else:
                 a = q[s].index(max(q[s]))
-            s_, r, terminal, info = env.step(a)
-            stillGo = not terminal
-            q[s][a]=(q_old[s][a])+(alpha*(r+(gamma*max(q_old[s_]))-q_old[s][a]))
-            v[s]=max(q[s])
-            pi[s]=q[s].index(max(q[s]))
-            s = s_
-            q_old = q
-
+            s_, r, terminal, info = env.step(a) #Get results of actions
+            stillGo = not terminal #If terminal state,update control boolean
+            q[s][a]=(q_old[s][a])+(alpha*(r+(gamma*max(q_old[s_]))-q_old[s][a])) #Update q[s][a]
+            v[s]=max(q[s]) #Update v[s] with max value of q[s]
+            pi[s]=q[s].index(max(q[s])) #Update pi[s] with max action of q[s]
+            s = s_ #Update s to s_
+            q_old = q #Update q_old
+    logger.log(k, v, pi) #Update logger one last time
 ###############################################################################
     return pi
 

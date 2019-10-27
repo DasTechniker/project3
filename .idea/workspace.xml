@@ -114,6 +114,14 @@
       <option name="presentableId" value="Default" />
       <updated>1571870646441</updated>
     </task>
+    <task id="LOCAL-00001" summary="Commenting, cleaning.">
+      <created>1572207035665</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1572207035665</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -129,12 +137,16 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Commenting, cleaning." />
+    <option name="LAST_COMMIT_MESSAGE" value="Commenting, cleaning." />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/crawler.py</url>
-          <line>100</line>
+          <line>104</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>

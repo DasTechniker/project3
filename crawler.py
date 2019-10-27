@@ -82,25 +82,31 @@ def q_learning(env, logger):
     #Set up v, pi, and q.
     v = [0]*NUM_STATES
     pi = [0]*NUM_STATES
-    q = [0] * NUM_STATES
+    q = [0] * NUM_STATES #Did you know q = [[0]*NUM_ACTIONS]*NUM_STATES just makes a list of the same list over and over? It sucks.
     for i in range(NUM_STATES):
         q[i] = [0] * NUM_ACTIONS
     q_old = q
 
+    #Iitialise s
     s = env.reset()
-    for k in range(1, max_iterations):
-        #logger.log(k, v, pi)
+    #For k iterations
+    for k in range(1, max_iterations+1):
+        logger.log(k, v, pi) #Update logger
+        #Pick a. If all current actions values are the same OR by random chance, pick a random actions. Else, pick max action.
         a = 0
         if (sum(q[s]) / len(q[s])) == max(q[s]) or random.random() >= eps:
             a = random.randrange(NUM_ACTIONS)
         else:
             a = q[s].index(max(q[s]))
-        s_, r, terminal, info = env.step(a)
-        q[s][a] = (q_old[s][a]) + (alpha * (r + (gamma * max(q_old[s_])) - q_old[s][a]))
-        v[s] = max(q[s])
-        pi[s] = q[s].index(max(q[s]))
-        s = s_
-        q_old = q
+
+        s_, r, terminal, info = env.step(a) #Step, get results
+        q[s][a] = (q_old[s][a]) + (alpha * (r + (gamma * max(q_old[s_])) - q_old[s][a])) #Update q[s][a]
+        v[s] = max(q[s]) #Update v[s] with max of q[s]
+        pi[s] = q[s].index(max(q[s])) #Update pi[s] with max actions
+        s = s_ #Update state
+        q_old = q #transfer q to q_old
+
+    logger.log(k, v, pi) #Update logger one last time
 ###############################################################################
     return pi
 
